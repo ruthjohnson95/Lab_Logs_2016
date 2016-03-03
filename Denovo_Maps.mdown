@@ -1,0 +1,77 @@
+
+# Running Denovo-Maps
+### Before
+###### Make sure to get on a node on Hoffman-- don't do work on login nodes:
+
+To do so, run command: `qrsh`
+
+###### Need Stacks installed (stacks 1.32) 
+
+```
+tar xzvf stacks-1.32.tar.gz
+cd stacks-1.32
+./configure --prefix=/u/home/z/zhen/bin/stacks1.32
+make
+make install 
+```
+
+Manual can be found [here](http://catchenlab.life.illinois.edu/stacks/manual/).
+
+### Script
+
+The name of our script is `run-greenbul-3plates.sh`. Additionally, after creating a file, one might need to change the execution settings. 
+```
+chmod +x run-greenbul-3plates.sh
+```
+
+```sh
+#!/bin/bash                                 
+#$ -cwd                                                                     
+#$ -V                                                                        
+#$ -N greenbul-denovo-m2M3n3                                                 
+#$ -pe shared 8                                                              
+#$ -l highp,h_data=8G,time=72:00:00                                          
+#$ -M ruthjohnson@g.ucla.edu                                                 
+#$ -m bea 
+
+mkdir denovo-greenbul-m2M3n3
+cd /u/nobackup/klohmuel/zhen/Avirens/process_radtags-greenbul-RAD-all-cat 
+inputL=`ls *.fq.gz | awk '{printf "-s "$1 " "}'`
+echo "nohup /u/home/k/kruegg/nobackup-klohmuel/bin/stacks1.32/bin/denovo_map.pl -m 2 -M 3 -n 3 -S -b 4 -D 'greenbul' -T 16 -t --bound_high 0.05 -o /u/home/k/kruegg/nobackup-klohmuel/Avirens/denovo-greenbul-m2M3n3" $inputL ">/u/home/k/kruegg/nobackup-klohmuel/Avirens/denovo-greenbul-m2M3n3/nohup.out" | bash
+```
+_Note_: '-M' parameter for cluster does not work; email notifications will automatically be sent to the email associated with the account 
+
+Submit the job by using: 
+```
+qsub run-greenbul-3plates.sh
+```
+### Changing Scripts with Different Parameters 
+-m specify a minimum number of identical, raw reads required to create a stack.
+
+-M  specify the number of mismatches allowed between loci when processing a single individual (default 2).
+
+-n  specify the number of mismatches allowed between loci when building the catalog (default 0).
+
+To change the -m, -M, -n, make sure to change:
+1. (name of output file) `-N greenbul-denovo-m#M#n#`
+2. (new directory) `mkdir denote-greenbul-m#M#n#`
+3. (input) `-m # -M # -n #`
+4. (output path) `-o /u/home…/denovo-greenbul-m#M#n#`
+5. (input path) `/u/home/…/denovo-greenbul-m#M#n#/nohup.out`
+
+### Checking the Run
+To make sure that the run is running correctly, make sure that:
+* When opening `nohup.out`, the lines inside read similarily: 
+ ```
+Identifying unique stacks; file   1 of 243 [122024]
+```
+*When opening  `denovo_map.log`, the file looks similar to:
+```
+.fq.gz -s 122183.fq.gz -s 122186.fq.gz -s 122187.fq.gz -s 122190.fq.gz -s 122193.fq.gz -s 122194.fq.gz -s 122201.fq.gz -s 122216.fq.gz -s 122218.fq.gz -s 
+```
+* When the run is completed, you should have 3 files per sample called:
+`250293.tags.tsv.gz`, `950275.snps.tsv.gz`, `250297.alleles.tsv.gz`
+* Additionally, there should be the following 3 files.
+`batch_4.catalog.alleles.tsv.gz`, `batch_4.catalog.snps.tsv.gz`, `batch_4.catalog.tags.tsv.gz`
+
+_Note_: to make sure that the contents of the files are not empty, check using `ls -l` and check that the size does not equal 0

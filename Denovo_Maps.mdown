@@ -75,7 +75,7 @@ To make sure that the run is running correctly, make sure that:
 Identifying unique stacks; file   1 of 243 [122024]
 ```
 
-*When opening  `denovo_map.log`, the file looks similar to:
+* When opening  `denovo_map.log`, the file looks similar to:
 ```
 .fq.gz -s 122183.fq.gz -s 122186.fq.gz -s 122187.fq.gz -s 122190.fq.gz -s 122193.fq.gz -s 122194.fq.gz -s 122201.fq.gz 
 -s 122216.fq.gz -s 122218.fq.gz -s 

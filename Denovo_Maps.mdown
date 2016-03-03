@@ -53,10 +53,15 @@ qsub run-greenbul-3plates.sh
 -n  specify the number of mismatches allowed between loci when building the catalog (default 0).
 
 To change the -m, -M, -n, make sure to change:
+
 1. (name of output file) `-N greenbul-denovo-m#M#n#`
+
 2. (new directory) `mkdir denote-greenbul-m#M#n#`
+
 3. (input) `-m # -M # -n #`
+
 4. (output path) `-o /u/home…/denovo-greenbul-m#M#n#`
+
 5. (input path) `/u/home/…/denovo-greenbul-m#M#n#/nohup.out`
 
 ### Checking the Run
